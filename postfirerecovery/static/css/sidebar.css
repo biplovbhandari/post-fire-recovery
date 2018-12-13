@@ -7,12 +7,13 @@
     font-weight: 200;
     background-color: #ffffff;
     position: fixed;
-    /*top: 0;*/
+    /*top: 0;
+    margin-top: 7px;
+    color: #ffffff;*/
     width: inherit;
     height: calc(100vh - 110px);
-    color: #ffffff;
     left: 0;
-    margin-top: 7px;
+    padding: 5px 5px 0 5px;
 }
 
 .menu-content {
@@ -160,4 +161,44 @@
 .glyphicon.glyphicon-grain {
     font-size: 2em;
     vertical-align: -15%;
+}
+
+/* New */
+.panel-heading .accordion-toggle {
+    color: #fff!important;
+    margin-top: 0;
+    margin-bottom: 0;
+    text-decoration: none!important;
+}
+
+/* Collapsible */
+.panel-heading .accordion-toggle:after {
+	font-family: "Font Awesome 5 Free";
+	content: "\f146";
+	font-size: 20px;
+	font-weight: 900;
+	line-height: 1;
+	float: right;
+}
+
+.panel-heading .accordion-toggle.collapsed:after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f0fe";
+}
+
+.panel-heading .accordion-toggle {
+    color: white !important;
+    margin-top: 0;
+    margin-bottom: 0;
+    text-decoration: none !important;
+}
+
+.sidebar-table {
+    width: 100%;
+}
+
+.sidebar-table td {
+    padding-bottom: 10px;
+    padding-top: 5px;
 }

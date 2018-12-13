@@ -32,7 +32,7 @@
             controlUI.setAttribute('class', 'tool-control text-center');
             controlUI.setAttribute('id', 'analysis-tool-control');
             controlUI.title = 'Toogle Tools Visibility';
-            controlUI.innerHTML = "<span class='glyphicon glyphicon-eye-open large-icon' aria-hidden='true'></span>";
+            controlUI.innerHTML = "<span class='glyphicon glyphicon-eye-close large-icon' aria-hidden='true'></span>";
             controlDiv.appendChild(controlUI);
             return controlUI;
         };

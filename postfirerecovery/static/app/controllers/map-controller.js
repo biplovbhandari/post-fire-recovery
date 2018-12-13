@@ -17,7 +17,7 @@
         $scope.showAreaVariableSelector = false;
         $scope.alertContent = '';
         $scope.toolControlClass = 'glyphicon glyphicon-eye-open';
-        $scope.showTabContainer = true;
+        $scope.showTabContainer = false;
         $scope.showLoader = false;
 
         $scope.sliderYear = null;
@@ -49,6 +49,19 @@
         /**
          * Start with UI
          */
+
+        // Datepicker
+		var datepickerYearOptions = {
+			autoclose: true,
+			startDate: new Date('1984'),
+			endDate: new Date('2018'),
+			clearBtn: true,
+            container: '.datepicker-year-class',
+            format: 'yyyy/mm/dd',
+        };
+
+		$('#datepicker-year-start').datepicker(datepickerYearOptions);
+		$('#datepicker-year-end').datepicker(datepickerYearOptions);
 
         // Analysis Tool Control
         $scope.toggleToolControl = function () {
@@ -133,18 +146,6 @@
                 areaSelectFrom: $scope.areaSelectFrom,
                 areaName: $scope.areaName
             };
-            /*LandCoverService.getLandCoverMap(parameters)
-            .then(function (data) {
-                var mapType = MapService.getMapType(data.eeMapId, data.eeMapToken, type);
-                loadMap(type, mapType);
-                $timeout(function () {
-                    showInfoAlert('The map data shows the landcover data for ' + $scope.sliderYear);
-                }, 3500);
-                //$scope.showLegend = true;
-            }, function (error) {
-                showErrorAlert(error.error);
-                console.log(error);
-            });*/
             $scope.showLoader = false;
         };
 
@@ -424,7 +425,6 @@
 
         $scope.getDownloadURL = function (options) {
             var type = options.type || 'landcover';
-            var v1 = options.v1;
             if (verifyBeforeDownload(type)) {
                 $scope['show' + CommonService.capitalizeString(type) + 'DownloadURL'] = false;
                 showInfoAlert('Preparing Download Link...');
@@ -435,19 +435,9 @@
                     shape: $scope.shape,
                     areaSelectFrom: $scope.areaSelectFrom,
                     areaName: $scope.areaName,
-                    v1: v1,
                     type: type,
                     index: $scope.primitiveIndex
                 };
-                LandCoverService.getDownloadURL(parameters)
-                .then(function (data) {
-                    showSuccessAlert('Your Download Link is ready!');
-                    $scope[type + 'DownloadURL'] = data.downloadUrl;
-                    $scope['show' + CommonService.capitalizeString(type) + 'DownloadURL'] = true;
-                }, function (error) {
-                    showErrorAlert(error.error);
-                    console.log(error);
-                });
             }
         };
 
@@ -484,21 +474,6 @@
                     index: $scope.primitiveIndex,
                     fileName: fileName
                 };
-
-                LandCoverService.saveToDrive(parameters)
-                .then(function (data) {
-                    if (data.error) {
-                        showErrorAlert(data.error);
-                        console.log(data.error);
-                    } else {
-                        showInfoAlert(data.info);
-                        $scope.hideGDriveFileName(type);
-                        $('#' + type + 'GDriveFileName').val('');
-                    }
-                }, function (error) {
-                    showErrorAlert(error.error);
-                    console.log(error);
-                });
             }
         };
 

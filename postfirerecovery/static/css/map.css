@@ -1,3 +1,10 @@
+/* Map */
+
+.map {
+    display: block;
+    height: calc(100vh - 120px);
+}
+
 .lcp-class-color {
   	width: 25px;
   	height: 25px;
@@ -118,4 +125,20 @@
 
 .inner-tab {
     margin-top: 15px;
+}
+
+/* Custom tool */
+.tool-control {
+    background-color: #fff;
+    border: 2px solid #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    margin: 10px 14px;
+}
+
+.large-icon {
+    line-height: 20px;
+    font-size: 1.4em;
 }

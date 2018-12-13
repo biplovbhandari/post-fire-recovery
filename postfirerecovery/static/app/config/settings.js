@@ -1,14 +1,14 @@
 var settings = {
     menus: [
         {
-            'name': 'Methods',
-            'url': '/method/',
-            'show': false
+            'name': 'About',
+            'url': '#',
+            'show': true
         },
         {
-            'name': 'Service Applications',
-            'url': '/service-applications/',
-            'show': false
+            'name': 'Contact Us',
+            'url': '#',
+            'show': true
         }
     ],
     applicationName: 'Post Fire Recovery',

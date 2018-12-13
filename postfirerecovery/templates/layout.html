@@ -11,6 +11,7 @@
 	<title>Post Fire Recovery</title>
 
 	<link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 	{% addtoblock "css" %}
 	    <style type="text/css">
@@ -31,6 +32,7 @@
 		<link href="{% static 'vendor/ion.rangeSlider/css/ion.rangeSlider.skinHTML5.css' %}" rel="stylesheet">
 
 		{% if debug %}
+		<link href="{% static 'css/common.css' %}" rel="stylesheet">
 		<link href="{% static 'css/main.css' %}" rel="stylesheet">
 		<link href="{% static 'css/map.css' %}" rel="stylesheet">
 		<link href="{% static 'css/navigation.css' %}" rel="stylesheet">
@@ -42,7 +44,7 @@
 		{% endif %}
 
 		<!-- Fonts -->
-		<link href="{% static 'vendor/components-font-awesome/css/fontawesome.min.css' %}" rel="stylesheet">
+		<link href="{% static 'vendor/components-font-awesome/css/fontawesome-all.min.css' %}" rel="stylesheet">
 	{% endaddtoblock %}
 
 	{% render_block "css" %}
