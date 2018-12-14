@@ -26,7 +26,12 @@
 	         <ul class="nav navbar-nav navbar-right">
 	             <li ng-repeat="menu in menus">
 	                 <a ng-show="menu.show" class="navmenu" href="[[menu.url]]">[[menu.name]]</a>
-	             </li>
+				 </li>
+				 <li>
+					<a class="btn login-button" type="button" href="/login/">
+						<i class="far fa-user"></i> Login or Sign Up
+					</a>
+				</li>
 	         </ul>
 		</div>
 	</div>

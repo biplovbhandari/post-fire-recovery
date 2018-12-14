@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% load cms_tags staticfiles %}
+
+{% block navigation_container%}
+    {% include "navigation.html" %}
+{% endblock navigation_container %}
+
+{% block main_container %}
+
+<div class="container" ng-controller="loginController">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3" style="margin-top: 40px;">
+            <div class="panel panel-login">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <a href="#" class="active anchor-no-decoration" id="login-form-link" ng-click="loginFormLinkClick($event)">Login</a>
+                        </div>
+                        <div class="col-xs-6">
+                            <a href="#" id="register-form-link" class="anchor-no-decoration" ng-click="registerFormLinkClick($event)">Register</a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+
+                        <div class="col-lg-12">
+
+                            <div class="login-form" id="login-form-div">
+                                <div class="login-form-panel">
+                                    <h1>Login</h1>
+                                    <p>Please enter your username and password</p>
+                                </div>
+                                <form id="login-form" action="#" method="post" role="form" style="display: block;">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="input-login-username" placeholder="Username">
+                                    </div>
+                                    <div class="form-group show-password">
+                                        <input type="password" class="form-control" id="input-login-password" placeholder="Password">
+                                        <span class="password-text" ng-click="showPassword($event)">Show</span>
+                                    </div>
+                                    <div class="forgot">
+                                        <a href="#">Forgot password?</a>
+                                    </div>
+                                    <button type="submit" id="login" class="btn btn-primary">Login</button>
+                                </form>
+                            </div>
+
+                            <div class="login-form" id="register-form-div" style="display: none;">
+                                <div class="login-form-panel">
+                                    <h1>Register</h1>
+                                    <p>Sign up to get started!</p>
+                                </div>
+
+                                <form id="register-form" action="#" method="post" role="form">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="input-register-username" placeholder="Username">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" id="input-register-email" placeholder="Email Address">
+                                    </div>
+                                    <div class="form-group show-password">
+                                        <input type="password" class="form-control" id="input-register-password" placeholder="Password">
+                                        <span class="password-text" ng-click="showPassword($event)">Show</span>
+                                    </div>
+                                    <div class="form-group show-password">
+                                        <input type="password" class="form-control" id="input-register-confirm-password" placeholder="Confirm Password">
+                                        <span class="password-text" ng-click="showPassword($event)">Show</span>
+                                    </div>
+                                    <button type="submit" id="register" class="btn btn-primary">Register</button>
+                                </form>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_container %}

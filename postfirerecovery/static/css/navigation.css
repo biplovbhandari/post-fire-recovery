@@ -133,3 +133,11 @@
 a.navbar-brand:hover, a.navbar-brand:focus, .nav > li > a:hover, .nav > li > a:focus {
     background-color: black !important;
 }
+
+.login-button {
+	background-color: #333333 !important;
+    color: white !important;
+    border-color: #333333 !important;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
