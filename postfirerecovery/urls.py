@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
 
+#from .views import login
+
 from cms.sitemaps import CMSSitemap
 from django.conf import settings
 from django.conf.urls import include, url
@@ -19,10 +21,21 @@ urlpatterns = [
     url(r'^sitemap\.xml$', sitemap,
         {'sitemaps': {'cmspages': CMSSitemap}}),
     url(r'^admin/', include(admin.site.urls)),  # NOQA
+]
+
+urlpatterns += [
+    url(r'^', include('users.urls', namespace='user')),
+]
+
+urlpatterns += [
+    url(r'^api-auth/', include('rest_framework.urls')),
+]
+
+urlpatterns += [
     url(r'^$', TemplateView.as_view(template_name='home.html')),
     url(r'^home/', TemplateView.as_view(template_name='home.html')),
     url(r'^map/', TemplateView.as_view(template_name='map.html')),
-    url(r'^login/', TemplateView.as_view(template_name='login.html')),
+    url(r'^login-form/', TemplateView.as_view(template_name='login.html')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
