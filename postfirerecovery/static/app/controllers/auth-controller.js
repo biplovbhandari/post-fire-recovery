@@ -7,10 +7,11 @@
         $scope.menus = appSettings.menus;
         $scope.applicationName = appSettings.applicationName;
         $scope.partnersHeader = appSettings.partnersHeader;
-        $scope.userName = AuthService.getUserName();
+        $scope.userName = AuthService.getCurrentUser();
         $scope.firstName = null;
         $scope.lastName = null;
         $scope.email = null;
+        $scope.alertContent = '';
 
         /**
          * Alert
@@ -20,19 +21,14 @@
             $scope.alertContent = '';
         };
 
-        var showErrorAlert = function (alertContent) {
+        $scope.showAlert = function (className, alertContent) {
+            var alertClass = ['info', 'success', 'danger'];
+            var index = alertClass.indexOf(className);
+            if (index > -1) {
+                alertClass.splice(index, 1);
+            }
+            $('.custom-alert').removeClass('display-none').removeClass('alert-' + alertClass[0]).removeClass('alert-' + alertClass[1]).addClass('alert-' + className);
             $scope.alertContent = alertContent;
-            $('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
-        };
-
-        var showSuccessAlert = function (alertContent) {
-            $scope.alertContent = alertContent;
-            $('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
-        };
-
-        var showInfoAlert = function (alertContent) {
-            $scope.alertContent = alertContent;
-            $('.custom-alert').removeClass('display-none').removeClass('alert-success').removeClass('alert-danger').addClass('alert-info');
         };
 
         $scope.loginFormLinkClick = function (e) {
@@ -65,23 +61,48 @@
                 .then(function () {
                     $scope.loginForm.$setPristine();
                     $scope.loginForm.$setUntouched();
-                    //$location.path('/map');
-                    $window.location.href = '/map';
+                    $scope.showAlert('success', 'Logged in successfully! Redirecting...');
+                    $timeout(function () { $window.location.href = '/map'; }, 2000);
                 }, function (error) {
-                    showErrorAlert(error.error);
+                    $scope.showAlert('danger', error.error);
+                    return false;
                 });
             } else {
-                showErrorAlert('enter both username and password!');
+                $scope.showAlert('danger', 'enter both username and password!');
+            }
+        };
+
+        $scope.userRegister = function (user) {
+            if (user.userName && user.password) {
+                if (user.password !== user.confirmPassword) {
+                    $scope.showAlert('danger', 'password does not match!');
+                    return false;
+                }
+
+                AuthService.userRegister(user)
+                .then(function () {
+                    $scope.registerForm.$setPristine();
+                    $scope.registerForm.$setUntouched();
+                    $scope.showAlert('success', 'Registration successful! Redirecting...');
+                    $timeout(function () { $window.location.href = '/map'; }, 2000);
+                }, function (error) {
+                    $scope.showAlert('danger', error.error);
+                    return false;
+                });
+            } else {
+                $scope.showAlert('danger', 'enter both username and password!');
             }
         };
 
         $scope.userLogout = function () {
             AuthService.userLogout();
+            // for some reason this is not working
+            //$scope.showAlert('success', 'Logged out successfully! Redirecting...');
             $window.location.href = '/map';
         };
 
         $scope.getProfile = function () {
-            var username = AuthService.getUserName();
+            var username = AuthService.getCurrentUser();
             var token = AuthService.getToken();
 
             if ((username !== null) && (token !== null)) {
@@ -91,7 +112,7 @@
                     $scope.lastName = data.last_name;
                     $scope.email = data.email;
                 }, function (error) {
-                    showErrorAlert(error.status + ' ' + error.data.detail);
+                    $scope.showAlert('danger', error.status + ' ' + error.data.detail);
                 });
             } else {
                 $location.path('/login');
@@ -99,7 +120,11 @@
         };
 
         if ($state.current.name === 'profile') {
-            $scope.getProfile();
+            if (AuthService.getCurrentUser()) {
+                $scope.getProfile();
+            } else {
+                $location.path('/login');
+            }
         }
 
         $scope.updateProfile = function (profile) {
@@ -114,14 +139,14 @@
             if (profile) {
                 if (!(!profile.password && !profile.confirmPassword)) {
                     if (profile.password !== profile.confirmPassword) {
-                        showErrorAlert('password does not match!');
+                        $scope.showAlert('danger', 'password does not match!');
                         return false;
                     } else {
                         user.password = profile.password;
                     }
                 }
             } else {
-                showErrorAlert('password is required!');
+                $scope.showAlert('danger', 'password is required!');
                 return false;
             }
 
@@ -130,9 +155,10 @@
                 $scope.profileForm.$setPristine();
                 $scope.profileForm.$setUntouched();
                 //$location.path('/map');
-                $window.location.href = '/map';
+                $scope.showAlert('success', 'Profile updated successfully! Redirecting...');
+                $timeout(function () { $window.location.href = '/map'; }, 2000);
             }, function (error) {
-                showErrorAlert(error.status + ' ' + error.data.detail);
+                $scope.showAlert('danger', error.status + ' ' + error.data.detail);
             });
         };
 

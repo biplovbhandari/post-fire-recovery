@@ -24,9 +24,12 @@ class UserCreate(generics.CreateAPIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            UserModel.objects.create_user(**serializer.validated_data)
-
-            return Response(serializer.validated_data, status=HTTP_201_CREATED)
+            user = UserModel.objects.create_user(**serializer.validated_data)
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'username': user.get_username(),
+            }, status=HTTP_200_OK)
 
         return Response({
             'status': 'Bad request',
@@ -71,9 +74,7 @@ def login(request):
         return Response({'error': 'Invalid Credentials'},
                         status=HTTP_404_NOT_FOUND)
     token, _ = Token.objects.get_or_create(user=user)
-    return Response(
-        {'token': token.key,
-         'username': user.get_username(),
-         },
-        status=HTTP_200_OK
-    )
+    return Response({
+        'token': token.key,
+        'username': user.get_username(),
+    }, status=HTTP_200_OK)

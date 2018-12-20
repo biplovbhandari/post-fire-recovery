@@ -13,7 +13,7 @@
                     <h1>Edit Profile</h1>
                 </div>
 
-                <form id="register-form" role="form" name="profileForm" novalidate>
+                <form id="profile-form" role="form" name="profileForm" novalidate>
                     <div class="form-group" style="margin-top: 20px;" ng-class="{ 'has-error': profileForm.username.$touched && profileForm.username.$invalid }">
                         <label for="username" class="float-left">User Name</label>
                         <input type="text" class="form-control" id="profile-username" name="username" value="[[ userName ]]" ng-model="userName" placeholder="Username" required>

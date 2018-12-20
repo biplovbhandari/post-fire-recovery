@@ -2,7 +2,7 @@
 
     'use strict';
     angular.module('postfirerecovery')
-    .controller('mapController', function ($http, $scope, $sanitize, $timeout, appSettings, CommonService, MapService) {
+    .controller('mapController', function ($scope, $sanitize, $timeout, CommonService, MapService) {
 
         // Global Variables
         var map = MapService.init();
@@ -31,19 +31,14 @@
             $scope.alertContent = '';
         };
 
-        var showErrorAlert = function (alertContent) {
+        $scope.showAlert = function (className, alertContent) {
+            var alertClass = ['info', 'success', 'danger'];
+            var index = alertClass.indexOf(className);
+            if (index > -1) {
+                alertClass.splice(index, 1);
+            }
             $scope.alertContent = alertContent;
-            $('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
-        };
-
-        var showSuccessAlert = function (alertContent) {
-            $scope.alertContent = alertContent;
-            $('.custom-alert').removeClass('display-none').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
-        };
-
-        var showInfoAlert = function (alertContent) {
-            $scope.alertContent = alertContent;
-            $('.custom-alert').removeClass('display-none').removeClass('alert-success').removeClass('alert-danger').addClass('alert-info');
+            $('.custom-alert').removeClass('display-none').removeClass('alert-' + alertClass[0]).removeClass('alert-' + alertClass[1]).addClass('alert-' + className);
         };
 
         /**
@@ -164,13 +159,13 @@
 
             var hasPolygon = (['polygon', 'circle', 'rectangle'].indexOf($scope.shape.type) > -1);
             if (!hasPolygon && !$scope.areaSelectFrom && !$scope.areaName) {
-                showErrorAlert('Please draw a polygon or select administrative region before proceding to download!');
+                $scope.showAlert('danger', 'Please draw a polygon or select administrative region before proceding to download!');
                 polygonCheck = false;
             }
 
             if (type === 'primitive') {
                 if (!$scope.primitiveIndex) {
-                    showErrorAlert('Select a primitive Layer to Download!');
+                    $scope.showAlert('danger', 'Select a primitive Layer to Download!');
                     primitiveCheck = false;
                 }
             }
@@ -299,7 +294,7 @@
 
             var files = e.target.files;
             if (files.length > 1) {
-                showErrorAlert('upload one file at a time');
+                $scope.showAlert('danger', 'upload one file at a time');
                 $scope.$apply();
             } else {
                 MapService.removeGeoJson(map);
@@ -330,7 +325,7 @@
                         try {
                             addedGeoJson = JSON.parse(textResult);
                         } catch (e) {
-                            showErrorAlert('we only accept kml, kmz and geojson');
+                            $scope.showAlert('danger', 'we only accept kml, kmz and geojson');
                             $scope.$apply();
                         }
                     }
@@ -351,7 +346,7 @@
                             }
 
                             if (polygonArray.length > 500) {
-                                showInfoAlert('Complex geometry will be simplified using the convex hull algorithm!');
+                                $scope.showAlert('info', 'Complex geometry will be simplified using the convex hull algorithm!');
                                 $scope.$apply();
                             }
 
@@ -359,11 +354,11 @@
                             $scope.shape.type = 'polygon';
                             $scope.shape.geom = polygonArray;
                         } else {
-                            showErrorAlert('multigeometry and multipolygon not supported yet!');
+                            $scope.showAlert('danger', 'multigeometry and multipolygon not supported yet!');
                             $scope.$apply();
                         }
                     } else {
-                        showErrorAlert('multigeometry and multipolygon not supported yet!');
+                        $scope.showAlert('danger', 'multigeometry and multipolygon not supported yet!');
                         $scope.$apply();
                     }
                 };
@@ -427,7 +422,7 @@
             var type = options.type || 'landcover';
             if (verifyBeforeDownload(type)) {
                 $scope['show' + CommonService.capitalizeString(type) + 'DownloadURL'] = false;
-                showInfoAlert('Preparing Download Link...');
+                $scope.showAlert('info', 'Preparing Download Link...');
 
                 var parameters = {
                     primitives: $scope.assemblageLayers,
@@ -461,7 +456,7 @@
             if (verifyBeforeDownload(type)) {
                 // Check if filename is provided, if not use the default one
                 var fileName = $sanitize($('#' + type + 'GDriveFileName').val() || '');
-                showInfoAlert('Please wait while I prepare the download link for you. This might take a while!');
+                $scope.showAlert('info', 'Please wait while I prepare the download link for you. This might take a while!');
                 
                 var parameters = {
                     primitives: $scope.assemblageLayers,

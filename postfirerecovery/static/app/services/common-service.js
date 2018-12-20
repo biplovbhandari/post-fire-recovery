@@ -5,7 +5,9 @@
     angular.module('postfirerecovery')
     .service('CommonService', function (appSettings) {
 
-        this.getAreaVariableOptions = function (option, myanmar) {
+        var service = this;
+
+        service.getAreaVariableOptions = function (option, myanmar) {
             if (typeof(myanmar) === 'undefined') myanmar = false;
             if (option === 'country') {
                 if (myanmar) {
@@ -20,13 +22,13 @@
             }
         };
 
-        this.capitalizeString = function (string) {
+        service.capitalizeString = function (string) {
             return string.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
                 return p1 + p2.toUpperCase();
             });
         };
 
-        this.AnalysisToolControl = function (controlDiv) {
+        service.AnalysisToolControl = function (controlDiv) {
             // Set CSS for the control border.
             var controlUI = document.createElement('div');
             controlUI.setAttribute('class', 'tool-control text-center');
@@ -37,7 +39,7 @@
             return controlUI;
         };
 
-        this.buildChart = function (data, div, title) {
+        service.buildChart = function (data, div, title) {
             // build the chart
             Highcharts.chart(div, {
                 chart: {

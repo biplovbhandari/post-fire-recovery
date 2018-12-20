@@ -24,6 +24,7 @@ db.sqlite3
 .settings/
 .vs/
 *.sln
+postfirerecovery/.vscode/*
 
 # Vendor files
 # ======================
