@@ -2,11 +2,12 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" data-framework="angularjs">
 <head>
-
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
 	<meta name="viewport" content="width=1024">
+
+	<base href="/">
 
 	<title>Post Fire Recovery</title>
 
@@ -53,15 +54,15 @@
 </head>
 <body>
 
-	<div ng-cloak>
+	{% block navigation_container%}
+    	{% include "navigation.html" %}
+	{% endblock navigation_container %}
 
-        {% block navigation_container %} {% endblock navigation_container %}
+	<div ng-cloak ui-view></div>
 
-		{% block main_container %} {% endblock main_container %}
+	<div ui-view="footer" ng-if="$state.current.name!='map'"></div>
 
-	</div>
-
-	{% block footer_container %} {% endblock footer_container %}
+	<!--{% block footer_container %} {% endblock footer_container %}-->
 
 	{% addtoblock "js" %}
 
@@ -86,7 +87,9 @@
 		<script src="{% static 'vendor/angular/angular.min.js' %}"></script>
 
 		<!-- Angular Plugins -->
+		<script src="{% static 'vendor/angular-ui-router/release/angular-ui-router.min.js' %}"></script>
 		<script src="{% static 'vendor/angular-sanitize/angular-sanitize.min.js' %}"></script>
+		<script src="{% static 'vendor/ngstorage/ngStorage.min.js' %}"></script>
 
 		<!-- Spatial Libraries -->
 		<script src="{% static 'vendor/togeojson/togeojson.js' %}"></script>
@@ -100,17 +103,24 @@
 		<!-- Bootstrap Application -->
 		<script src="{% static 'app/init.js' %}"></script>
 
+		<!-- Routing -->
+		<script src="{% static 'app/route.js' %}"></script>
+
 		<!-- Load Settings -->
 		<script src="{% static 'app/config/settings.js' %}"></script>
 
-		<!-- Controllers -->
-		<script src="{% static 'app/controllers/utils-controller.js' %}"></script>
-		<script src="{% static 'app/controllers/login-controller.js' %}"></script>
-		<script src="{% static 'app/controllers/map-controller.js' %}"></script>
-
 		<!-- Services -->
+		<script src="{% static 'app/services/auth-service.js' %}"></script>
 		<script src="{% static 'app/services/common-service.js' %}"></script>
 		<script src="{% static 'app/services/map-service.js' %}"></script>
+
+		<!-- Directives -->
+		<script src="{% static 'app/directives/text-matches.js' %}"></script>
+
+		<!-- Controllers -->
+		<!--<script src="{% static 'app/controllers/utils-controller.js' %}"></script>-->
+		<script src="{% static 'app/controllers/auth-controller.js' %}"></script>
+		<script src="{% static 'app/controllers/map-controller.js' %}"></script>
 
 		{% else %}
 		<script src="{% static 'dist/application.min.js' %}"></script>

@@ -13,6 +13,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.static import serve
 from django.views.generic import TemplateView
 
+from rest_framework.authtoken import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 admin.autodiscover()
@@ -24,18 +25,17 @@ urlpatterns = [
 ]
 
 urlpatterns += [
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^api-token-auth/', views.obtain_auth_token),
+]
+
+urlpatterns += [
     url(r'^', include('users.urls', namespace='user')),
 ]
 
 urlpatterns += [
-    url(r'^api-auth/', include('rest_framework.urls')),
-]
-
-urlpatterns += [
-    url(r'^$', TemplateView.as_view(template_name='home.html')),
-    url(r'^home/', TemplateView.as_view(template_name='home.html')),
-    url(r'^map/', TemplateView.as_view(template_name='map.html')),
-    url(r'^login-form/', TemplateView.as_view(template_name='login.html')),
+    url(r'^.*$', TemplateView.as_view(template_name='layout.html')),
+    #url(r'^home/', TemplateView.as_view(template_name='map.html')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

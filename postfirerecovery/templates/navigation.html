@@ -2,7 +2,7 @@
 {% load staticfiles %}
 <nav ng-cloak class="navbar navbar-default navbar-fixed-top" role="navigation">
 
-    <div class="navbar-container" ng-controller="utilsController">
+    <div class="navbar-container" ng-controller="authController">
 		<div class="container-fluid banner-container main-padding">
              <div ng-repeat="partner in partnersHeader" class="banner">
                  <a href="[[partner.url]]" target="_blank">
@@ -19,7 +19,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		    </button>
-		    <a class="navbar-brand navmenu" href="/map/">[[applicationName]]</a>
+		    <a class="navbar-brand navmenu" ui-sref="map">[[applicationName]]</a>
 		</div>
 
 		<div class="container-fluid menu-container collapse navbar-collapse main-padding" id="navbar-collapse">
@@ -27,10 +27,25 @@
 	             <li ng-repeat="menu in menus">
 	                 <a ng-show="menu.show" class="navmenu" href="[[menu.url]]">[[menu.name]]</a>
 				 </li>
-				 <li>
-					<a class="btn login-button" type="button" href="/login-form/">
+				 <li ng-if="userName == null">
+					<a class="btn login-button" type="button" ui-sref="login">
 						<i class="far fa-user"></i> Login or Sign Up
 					</a>
+				</li>
+				<li ng-if="userName != null">
+					<!--<a class="btn login-button" type="button">
+						<i class="far fa-user"></i> Hi [[ userName ]]
+					</a>-->
+					<div class="dropdown">
+						<button class="btn login-button dropdown-toggle" type="button" data-toggle="dropdown">
+							<i class="far fa-user"></i> Hi [[ userName ]]
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" style="right: auto;">
+						  <li><a ui-sref="profile">Edit Profile</a></li>
+						  <li><a href="#" ng-click="userLogout()">Logout</a></li>
+						</ul>
+					</div>
 				</li>
 	         </ul>
 		</div>

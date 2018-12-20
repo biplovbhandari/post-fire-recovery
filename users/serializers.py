@@ -28,8 +28,9 @@ class UserSerializer(serializers.ModelSerializer):
             else:
                 instance.__setattr__(field, validated_data.get(field))
         instance.save()
+
         return instance
 
     class Meta:
         model = UserModel
-        fields = ('id', 'username', 'password', 'first_name', 'last_name',)
+        fields = ('id', 'email', 'username', 'password', 'first_name', 'last_name',)
