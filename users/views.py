@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, base_user
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_201_CREATED
 
 from users.models import User as UserModel
-from users.serializers import UserSerializer, ChangePasswordSerializer
+from users.serializers import UserSerializer, ChangePasswordSerializer, UserProfileUpdateSerializer
 from users.permissions import IsOwner
 
 @csrf_exempt
@@ -78,6 +78,42 @@ class UserProfile(generics.RetrieveUpdateAPIView):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset)
         return obj
+
+    def update(self, request):
+        self.object = self.get_object()
+        serializer = UserProfileUpdateSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            data = serializer.data.get
+            username = data('username')
+            username = base_user.AbstractBaseUser.normalize_username(username)
+
+            first_name = data('first_name', None)
+            last_name = data('last_name', None)
+            email = data('email', None)
+            if email:
+                email = base_user.BaseUserManager.normalize_email(email)
+
+            user = self.request.user
+            user.username = username
+            if first_name:
+                user.first_name = first_name
+            if last_name:
+                user.last_name = last_name
+            if email:
+                user.email = email
+
+            user.save()
+
+            token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({
+                'token': token.key,
+                'username': user.get_username(),
+            }, status=HTTP_200_OK)
+
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class UserChangePassword(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer

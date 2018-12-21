@@ -48,3 +48,13 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         validate_password(value)
         return value
+
+class UserProfileUpdateSerializer(serializers.Serializer):
+    '''
+    Serializer for user profile update endpoint.
+    '''
+
+    username = serializers.CharField(required=True)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)

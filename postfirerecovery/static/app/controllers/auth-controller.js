@@ -154,6 +154,9 @@
 
         $scope.updateProfile = function (profile) {
 
+            var username = AuthService.getCurrentUser();
+            var token = AuthService.getToken();
+
             var user = {
                 username : $scope.userName,
                 firstName: $scope.firstName,
@@ -161,7 +164,7 @@
                 email    : $scope.email
             };
 
-            if (profile) {
+            /*if (profile) {
                 if (!(!profile.password && !profile.confirmPassword)) {
                     if (profile.password !== profile.confirmPassword) {
                         $scope.showAlert('danger', 'password does not match!');
@@ -173,18 +176,22 @@
             } else {
                 $scope.showAlert('danger', 'password is required!');
                 return false;
-            }
+            }*/
 
-            AuthService.updateUserProfile (user, AuthService.getToken())
-            .then(function (data) {
-                $scope.profileForm.$setPristine();
-                $scope.profileForm.$setUntouched();
-                //$location.path('/map');
-                $scope.showAlert('success', 'Profile updated successfully! Redirecting...');
-                $timeout(function () { $window.location.href = '/map'; }, 2000);
-            }, function (error) {
-                $scope.showAlert('danger', error.status + ' ' + error.data.detail);
-            });
+            if ((username !== null) && (token !== null)) {
+                AuthService.updateUserProfile (user, AuthService.getToken())
+                .then(function (data) {
+                    $scope.profileForm.$setPristine();
+                    $scope.profileForm.$setUntouched();
+                    //$location.path('/map');
+                    $scope.showAlert('success', 'Profile updated successfully! Redirecting...');
+                    $timeout(function () { $window.location.href = '/map'; }, 2000);
+                }, function (error) {
+                    $scope.showAlert('danger', error.status + ' ' + error.data.detail);
+                });
+            } else {
+                $location.path('/login');
+            }
         };
 
     });

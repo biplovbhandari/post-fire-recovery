@@ -122,7 +122,7 @@
                 },
                 data: {
                     username  : user.username,
-                    password  : user.password,
+                    //password  : user.password,
                     first_name: user.firstName,
                     last_name : user.lastName,
                     email     : user.email
@@ -131,7 +131,8 @@
 
             var promise = $http(req)
             .then(function (response) {
-                return response.data;
+                service.setAuthToken(response.data);
+                return true;
             })
             .catch(function (e) {
                 console.log('Error: ', e);
