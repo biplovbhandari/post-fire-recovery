@@ -24,6 +24,12 @@
             controller: 'authController'
         });
 
+        $stateProvider.state('change_password', {
+            url: '/change_password',
+            templateUrl: 'static/app/templates/change-password.html',
+            controller: 'authController'
+        });
+
         // use the HTML5 History API
         $locationProvider.html5Mode(true);
     });

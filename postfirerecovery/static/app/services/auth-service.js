@@ -140,6 +140,32 @@
             return promise;
         };
 
+        service.changePassword = function (user, token) {
+            var req = {
+                method: 'PUT',
+                url: '/api/v1/user/change_password/',
+                headers: {
+                    'Authorization': 'Token ' + token,
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    old_password  : user.oldPassword,
+                    new_password  : user.newPassword
+                }
+            };
+            console.log(req);
+            var promise = $http(req)
+            .then(function (response) {
+                service.setAuthToken(response.data);
+                return true;
+            })
+            .catch(function (e) {
+                console.log('Error: ', e);
+                throw e;
+            });
+            return promise;
+        };
+
     });
 
 })();

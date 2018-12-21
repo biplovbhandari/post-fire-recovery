@@ -101,6 +101,31 @@
             $window.location.href = '/map';
         };
 
+        $scope.changePassword = function (form) {
+            if (!form) {
+                $scope.showAlert('danger', 'enter the details!');
+                return false;
+            }
+            if (form.newPassword !== form.confirmPassword) {
+                $scope.showAlert('danger', 'new password and confirm password are not same!');
+                return false;
+            }
+            var username = AuthService.getCurrentUser();
+            var token = AuthService.getToken();
+            console.log(token);
+            if ((username !== null) && (token !== null)) {
+                AuthService.changePassword (form, token)
+                .then(function (data) {
+                    $scope.changePasswordForm.$setPristine();
+                    $scope.changePasswordForm.$setUntouched();
+                    $scope.showAlert('success', 'Password changed! Redirecting...');
+                    $timeout(function () { $window.location.href = '/map'; }, 2000);
+                }, function (error) {
+                    $scope.showAlert('danger', error.status + ' ' + error.data.detail);
+                });
+            }
+        };
+
         $scope.getProfile = function () {
             var username = AuthService.getCurrentUser();
             var token = AuthService.getToken();

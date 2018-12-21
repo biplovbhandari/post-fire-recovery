@@ -47,7 +47,10 @@
                                     <!--<div class="forgot">
                                         <a href="#">Forgot password?</a>
                                     </div>-->
-                                    <button type="button" id="login" class="btn btn-primary" ng-click="userLogin(user)">Login</button>
+                                    <button type="button" id="login" class="btn btn-primary" ng-click="userLogin(user)"
+                                            ng-disabled="loginForm.username.$invalid || loginForm.password.$invalid">
+                                        Login
+                                    </button>
                                 </form>
                             </div>
 
@@ -92,7 +95,10 @@
                                         <span class="password-text" style="top: 60% !important;" ng-click="showPassword($event)">Show</span>
                                         <span ng-show="registerForm.confirmPassword.$error.equal" class="help-block">Password does not match</span>
                                     </div>
-                                    <button type="submit" id="register" class="btn btn-primary">Register</button>
+                                    <button type="submit" id="register" class="btn btn-primary"
+                                            ng-disabled="registerForm.username.$invalid || registerForm.password.$invalid || registerForm.email.$invalid || registerForm.confirmPassword.$invalid">
+                                        Register
+                                    </button>
                                 </form>
                             </div>
 

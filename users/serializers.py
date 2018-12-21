@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 
+from django.contrib.auth.password_validation import validate_password
+
 from rest_framework import serializers
 
 from users.models import User as UserModel
@@ -34,3 +36,15 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ('id', 'email', 'username', 'password', 'first_name', 'last_name',)
+
+class ChangePasswordSerializer(serializers.Serializer):
+    '''
+    Serializer for password change endpoint.
+    '''
+
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value

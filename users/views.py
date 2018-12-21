@@ -14,8 +14,27 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_201_CREATED
 
 from users.models import User as UserModel
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, ChangePasswordSerializer
 from users.permissions import IsOwner
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    if username is None or password is None:
+        return Response({'error': 'Please provide both username and password'},
+                        status=HTTP_400_BAD_REQUEST)
+    user = authenticate(username=username, password=password)
+    if not user:
+        return Response({'error': 'Invalid Credentials'},
+                        status=HTTP_404_NOT_FOUND)
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({
+        'token': token.key,
+        'username': user.get_username(),
+    }, status=HTTP_200_OK)
 
 class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -60,21 +79,42 @@ class UserProfile(generics.RetrieveUpdateAPIView):
         obj = get_object_or_404(queryset)
         return obj
 
-@csrf_exempt
-@api_view(['POST'])
-@permission_classes((AllowAny,))
-def login(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
-    if username is None or password is None:
-        return Response({'error': 'Please provide both username and password'},
-                        status=HTTP_400_BAD_REQUEST)
-    user = authenticate(username=username, password=password)
-    if not user:
-        return Response({'error': 'Invalid Credentials'},
-                        status=HTTP_404_NOT_FOUND)
-    token, _ = Token.objects.get_or_create(user=user)
-    return Response({
-        'token': token.key,
-        'username': user.get_username(),
-    }, status=HTTP_200_OK)
+class UserChangePassword(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = (IsOwner, )
+
+    def get_queryset(self):
+        return UserModel.objects.filter(id=self.request.user.id)
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset)
+        return obj
+
+    def update(self, request):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get('old_password')):
+                return Response({
+                    'status': 'Bad request',
+                    'message': 'Old password is wrong!'
+                }, status=HTTP_400_BAD_REQUEST)
+
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+
+            # update the token as well
+            user = self.request.user
+            Token.objects.filter(user=user).delete()
+            token = Token.objects.create(user=user)
+
+            return Response({
+                'token': token.key,
+                'username': user.get_username(),
+            }, status=HTTP_200_OK)
+
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
