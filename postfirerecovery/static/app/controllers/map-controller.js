@@ -13,6 +13,7 @@
         $scope.hucName = null;
         $scope.shownGeoJson = null;
         $scope.hucUnits = appSettings.hucUnits;
+        $scope.typologyCSV = '/static/data/typology_value.csv';
 
         //$scope.showAreaVariableSelector = false;
         $scope.alertContent = '';
@@ -214,7 +215,7 @@
 
             var hasPolygon = (['polygon', 'circle', 'rectangle'].indexOf($scope.shape.type) > -1);
             if (!hasPolygon && !$scope.hucName) {
-                $scope.showAlert('danger', 'Please draw a polygon or select administrative region before proceding to download!');
+                $scope.showAlert('danger', 'Please draw a polygon or select HUC before proceding to download!');
                 polygonCheck = false;
             }
 
@@ -469,14 +470,11 @@
                 onFinish: function (data) {
                     if ($scope.sliderYear !== data.from) {
                         $scope.sliderYear = data.from;
-                        //$scope.updateAssemblageProduct();
-                        //$scope.updatePrimitive($scope.primitiveIndex);
-                        //$scope.showProbabilityMap();
                         if ($('#land-cover-classes-tab').hasClass('active')) {
                             $scope.updateAssemblageProduct();
-                            $scope.showProbabilityMap();
                         } else if ($('#primitive-tab').hasClass('active')) {
-                            $scope.updatePrimitive($scope.primitiveIndex);
+                            //$scope.updatePrimitive($scope.primitiveIndex);
+                            console.log('primitive layers yet to come');
                         }
                     }
                 }
@@ -489,8 +487,8 @@
         $scope.showPrimitiveDownloadURL = false;
         $scope.primitiveDownloadURL = '';
 
-        $scope.getDownloadURL = function (options) {
-            var type = options.type || 'landcover';
+        $scope.getDownloadURL = function (type) {
+            if (typeof(type) === 'undefined') type = 'landcover';
             if (verifyBeforeDownload(type)) {
                 $scope['show' + CommonService.capitalizeString(type) + 'DownloadURL'] = false;
                 $scope.showAlert('info', 'Preparing Download Link...');
@@ -499,11 +497,19 @@
                     primitives: $scope.assemblageLayers,
                     year: $scope.sliderYear,
                     shape: $scope.shape,
-                    areaSelectFrom: $scope.areaSelectFrom,
                     hucName: $scope.hucName,
                     type: type,
                     index: $scope.primitiveIndex
                 };
+                LandCoverService.getDownloadURL(parameters)
+                .then(function (data) {
+                    $scope.showAlert('success', 'Your Download Link is ready!');
+                    $scope[type + 'DownloadURL'] = data.downloadUrl;
+                    $scope['show' + CommonService.capitalizeString(type) + 'DownloadURL'] = true;
+                }, function (error) {
+                    $scope.showAlert('error', error.error);
+                    console.log(error);
+                });
             }
         };
 

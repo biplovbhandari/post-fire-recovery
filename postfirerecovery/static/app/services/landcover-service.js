@@ -140,18 +140,18 @@
             return promise;
         };
 
-        this.getDownloadURL = function (type, shape, areaSelectFrom, areaName, year, primitives, index, serviceType) {
+        this.getDownloadURL = function (options) {
 
-            var url = '/api/landcover/';
-            if (serviceType === 'myanmar-fra') {
-                url = '/api/myanmar-fra/';
-            } else if (serviceType === 'myanmar-fra') {
-                url = '/api/myanmar-ipcc';
-            }
+            var primitives = options.primitives;
+            var year = options.year;
+            var shape = options.shape;
+            var hucName = options.hucName;
+            var type = options.type;
+            var index = options.index;
 
             var req = {
                 method: 'POST',
-                url: url,
+                url: '/api/landcover/',
                 data: {
                     year: year,
                     type: type,
@@ -163,10 +163,9 @@
                 }
             };
 
-            if (areaSelectFrom && areaName) {
-                req.data.areaSelectFrom = areaSelectFrom;
-                req.data.areaName = areaName;
-            } else {
+            if (hucName) {
+                req.data.hucName = hucName;
+            } else if (shape) {
                 var shapeType = shape.type;
                 if (shapeType === 'rectangle' || shapeType === 'polygon') {
                     req.data.shape = shapeType;

@@ -240,13 +240,13 @@ class Classification():
         stats = image.reduceRegion(reducer = ee.Reducer.frequencyHistogram(),
                                    geometry = self.geometry,
                                    crs = 'EPSG:3310', #'EPSG:6418',
-                                   scale = 100,
+                                   scale = 30,
                                    maxPixels = 1E13
                                    )
 
         data = stats.getInfo()['Mode']
         # converting to meter square by multiplying with scale value i.e. 100*100
         # and then converting to hectare multiplying with 0.0001
-        # area = reducer.getInfo()['tcc'] * 100 * 100 * 0.0001 # in hectare
+        # area = reducer.getInfo()['Mode'] * 100 * 100 * 0.0001 # in hectare
         # meaning we can use the value directly as the hectare
         return {self.INDEX_CLASS[int(float(k))]:float('{0:.2f}'.format(v)) for k,v  in data.items()}
