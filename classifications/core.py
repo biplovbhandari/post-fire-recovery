@@ -239,7 +239,7 @@ class Classification():
 
         stats = image.reduceRegion(reducer = ee.Reducer.frequencyHistogram(),
                                    geometry = self.geometry,
-                                   crs = 'EPSG:32647', # WGS Zone N 47
+                                   crs = 'EPSG:3310', #'EPSG:6418',
                                    scale = 100,
                                    maxPixels = 1E13
                                    )

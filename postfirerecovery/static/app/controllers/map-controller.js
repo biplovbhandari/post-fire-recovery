@@ -163,7 +163,23 @@
          */
         // Get stats for the graph
         $scope.getStats = function () {
-            $('#report-tab').html('<h4>The information will be updated soon!</h4>');
+            $('#report-tab').html('<h4>Please wait while I generate chart for you...</h4>');
+            var parameters = {
+                primitives: $scope.assemblageLayers,
+                year: $scope.sliderYear,
+                shape: $scope.shape,
+                hucName: $scope.hucName
+            };
+            LandCoverService.getStats(parameters)
+            .then(function (data) {
+                var graphData = [];
+                for (var key in data) {
+                    graphData.push({ name: key, y: data[key], color: $scope.landCoverClassesColor[key] });
+                }
+                CommonService.buildChart(graphData, 'report-tab', 'Landcover types for ' + $scope.sliderYear);
+            }, function (error) {
+                console.log(error);
+            });
         };
 
         var verifyBeforeDownload = function (type) {

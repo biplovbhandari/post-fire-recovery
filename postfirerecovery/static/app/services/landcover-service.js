@@ -49,18 +49,16 @@
             return promise;
         };
 
-        this.getStats = function (primitives, year, shape, areaSelectFrom, areaName, type) {
+        this.getStats = function (options) {
 
-            var url = '/api/landcover/';
-            if (type === 'myanmar-fra') {
-                url = '/api/myanmar-fra/';
-            } else if (type === 'myanmar-fra') {
-                url = '/api/myanmar-ipcc';
-            }
+            var primitives = options.primitives;
+            var year = options.year;
+            var shape = options.shape;
+            var hucName = options.hucName;
 
             var req = {
                 method: 'POST',
-                url: url,
+                url: '/api/landcover/',
                 data: {
                     year: year,
                     primitives: primitives.toString()
@@ -70,10 +68,9 @@
                 }
             };
 
-            if (areaSelectFrom && areaName) {
-                req.data.areaSelectFrom = areaSelectFrom;
-                req.data.areaName = areaName;
-            } else {
+            if (hucName) {
+                req.data.hucName = hucName;
+            } else if (shape) {
                 var shapeType = shape.type;
                 if (shapeType === 'rectangle' || shapeType === 'polygon') {
                     req.data.shape = shapeType;
