@@ -2,16 +2,17 @@
 
     'use strict';
     angular.module('postfirerecovery')
-    .controller('mapController', function (appSettings, $scope, $sanitize, $timeout, CommonService, MapService) {
+    .controller('mapController', function (appSettings, $scope, $sanitize, $timeout, CommonService, LandCoverService, MapService) {
 
         // Global Variables
         var map = MapService.init();
 
-        // $scope variables
+        // areas and overlay params
         $scope.overlays = {};
         $scope.shape = {};
         $scope.hucName = null;
         $scope.shownGeoJson = null;
+        $scope.hucUnits = appSettings.hucUnits;
 
         //$scope.showAreaVariableSelector = false;
         $scope.alertContent = '';
@@ -19,10 +20,21 @@
         $scope.showTabContainer = true;
         $scope.showLoader = false;
 
-        $scope.sliderYear = null;
-        $scope.sliderEndYear = null;
+        // Slider params
+        $scope.sliderYear = 2018;
+        $scope.sliderStartYear = 2001;
+        $scope.sliderEndYear = 2018;
 
-        $scope.hucArray = appSettings.hucArray;
+        // classes and assemblage params
+        $scope.landCoverClasses = appSettings.landCoverClasses;
+        $scope.landCoverClassesColor = {};
+        for (var i = 0; i < $scope.landCoverClasses.length; i++) {
+            $scope.landCoverClassesColor[$scope.landCoverClasses[i].name] = $scope.landCoverClasses[i].color;
+        }
+        $scope.assemblageLayers = [];
+        for (var j = 0; j < $scope.landCoverClasses.length; j++) {
+            $scope.assemblageLayers.push(j.toString());
+        }
 
         /**
          * Alert
@@ -105,12 +117,6 @@
         /*
         * Select Options for Variables
         **/
-       /*
-        $scope.populateAreaVariableOptions = function (option) {
-            $scope.showAreaVariableSelector = true;
-            $scope.areaSelectFrom = option.value;
-            $scope.areaVariableOptions = CommonService.getAreaVariableOptions(option.value);
-        };*/
 
         // Default the administrative area selection
         var clearSelectedArea = function () {
@@ -133,17 +139,23 @@
         $scope.initMap = function (year, type) {
             $scope.showLoader = true;
 
-            $scope.sliderYear = year;
-            $scope.sliderEndYear = year;
-
             var parameters = {
                 primitives: $scope.assemblageLayers,
                 year: year,
                 shape: $scope.shape,
-                areaSelectFrom: $scope.areaSelectFrom,
                 hucName: $scope.hucName
             };
-            $scope.showLoader = false;
+            LandCoverService.getLandCoverMap(parameters)
+            .then(function (data) {
+                var mapType = MapService.getMapType(data.eeMapId, data.eeMapToken, type);
+                loadMap(type, mapType);
+                $timeout(function () {
+                    $scope.showAlert('info', 'The map data shows the landcover data for ' + $scope.sliderYear);
+                }, 3500);
+            }, function (error) {
+                $scope.showAlert('error', error.error);
+                console.log(error);
+            });
         };
 
         /**
@@ -391,11 +403,11 @@
         $timeout(function () {
             $('#slider-year-selector').ionRangeSlider({
                 grid: true,
-                min: 2000,
+                min: $scope.sliderStartYear,
                 max: $scope.sliderEndYear,
                 from: $scope.sliderEndYear,
                 force_edges: true,
-                grid_num: $scope.sliderEndYear - 2000,
+                grid_num: $scope.sliderEndYear - $scope.sliderStartYear,
                 prettify_enabled: false,
                 onFinish: function (data) {
                     if ($scope.sliderYear !== data.from) {

@@ -16,6 +16,8 @@ from django.views.generic import TemplateView
 from rest_framework.authtoken import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
+from classifications import api as classifications_api
+
 admin.autodiscover()
 
 urlpatterns = [
@@ -31,6 +33,7 @@ urlpatterns += [
 
 urlpatterns += [
     url(r'^', include('users.urls', namespace='user')),
+    url(r'^api/landcover/$', classifications_api.api),
 ]
 
 urlpatterns += [

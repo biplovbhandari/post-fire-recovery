@@ -10,11 +10,11 @@
         service.init = function (lng, lat, zoom) {
 
             // Global Variables
-            var DEFAULT_ZOOM = zoom || 8,
+            var DEFAULT_ZOOM = zoom || 10,
                 MAX_ZOOM = 25,
                 DEFAULT_CENTER = {
-                    lng: lng || -120.9697187,
-                    lat: lat || 39.1538547
+                    lng: lng || -120.400444,
+                    lat: lat || 39.5652363
                 },
                 // Map options
                 mapOptions = {
@@ -25,7 +25,7 @@
                         style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
                         position: google.maps.ControlPosition.TOP_CENTER
                     },
-                    mapTypeId: 'terrain',
+                    mapTypeId: 'roadmap',
                     fullscreenControl: true,
                     fullscreenControlOptions: {
                         position: google.maps.ControlPosition.TOP_LEFT

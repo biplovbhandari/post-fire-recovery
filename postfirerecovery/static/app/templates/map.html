@@ -10,7 +10,7 @@
 
         <!-- Loader Container -->
         <div id="loader" class="loader" ng-show="showLoader">
-            <div class="loading-img" style="background: url({% static 'images/spinner.gif' %}) no-repeat;"></div>
+            <div class="loading-img" style="background: url('static/images/spinner.gif') no-repeat;"></div>
         </div>
 
         <!-- Sidebar Container -->
@@ -20,15 +20,15 @@
         </div>
 
         <!-- Map Container -->
-        <div class="col-md-9 col-lg-9 map" id="map" ng-init="initMap(2016, 'landcovermap', true, true); getStats(true);"></div>
+        <div class="col-md-9 col-lg-9 map" id="map" ng-init="initMap(2018, 'landcovermap');"></div>
 
         <!-- Toogle button container -->
         <div id="tool-control-container"></div>
 
         <!-- Time Slider -->
-        <!--<div class="slider-year-container">
+        <div class="slider-year-container">
             <input type="text" id="slider-year-selector" name="slider-year-selector" value="" />
-        </div>-->
+        </div>
 
         <!-- Tab Container -->
         <div class="tab-tool" ng-show="showTabContainer">
@@ -90,7 +90,7 @@
                             <div class="tab-pane fade in" id="admin-tab">
                                 <div class="form-group">
                                     <label for="area-variable-filter">Filter By HUC</label>
-                                    <select name="area-variable-filter" class="form-control" ng-options="option for option in hucArray"
+                                    <select name="area-variable-filter" class="form-control" ng-options="option for option in hucUnits"
                                             ng-model="huc" ng-change="loadHUC(huc)">
                                     </select>
                                 </div>

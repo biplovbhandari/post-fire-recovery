@@ -4,6 +4,7 @@
 
 # private
 # ===========
+credentials/
 media/*
 # Exception to the rule
 !media/README.md
