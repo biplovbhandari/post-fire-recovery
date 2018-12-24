@@ -3,24 +3,9 @@
     'use strict';
 
     angular.module('postfirerecovery')
-    .service('CommonService', function (appSettings) {
+    .service('CommonService', function () {
 
         var service = this;
-
-        service.getAreaVariableOptions = function (option, myanmar) {
-            if (typeof(myanmar) === 'undefined') myanmar = false;
-            if (option === 'country') {
-                if (myanmar) {
-                    return ['Myanmar'];
-                }
-                return appSettings.countries;
-            } else if (option === 'province') {
-                if (myanmar) {
-                    return appSettings.myanmarProvinces;
-                }
-                return appSettings.provinces;
-            }
-        };
 
         service.capitalizeString = function (string) {
             return string.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
@@ -34,7 +19,7 @@
             controlUI.setAttribute('class', 'tool-control text-center');
             controlUI.setAttribute('id', 'analysis-tool-control');
             controlUI.title = 'Toogle Tools Visibility';
-            controlUI.innerHTML = "<span class='glyphicon glyphicon-eye-close large-icon' aria-hidden='true'></span>";
+            controlUI.innerHTML = "<span class='glyphicon glyphicon-eye-open large-icon' aria-hidden='true'></span>";
             controlDiv.appendChild(controlUI);
             return controlUI;
         };

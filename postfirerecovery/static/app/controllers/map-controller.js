@@ -2,7 +2,7 @@
 
     'use strict';
     angular.module('postfirerecovery')
-    .controller('mapController', function ($scope, $sanitize, $timeout, CommonService, MapService) {
+    .controller('mapController', function (appSettings, $scope, $sanitize, $timeout, CommonService, MapService) {
 
         // Global Variables
         var map = MapService.init();
@@ -10,18 +10,19 @@
         // $scope variables
         $scope.overlays = {};
         $scope.shape = {};
-        $scope.areaSelectFrom = null;
-        $scope.areaName = null;
+        $scope.hucName = null;
         $scope.shownGeoJson = null;
 
-        $scope.showAreaVariableSelector = false;
+        //$scope.showAreaVariableSelector = false;
         $scope.alertContent = '';
         $scope.toolControlClass = 'glyphicon glyphicon-eye-open';
-        $scope.showTabContainer = false;
+        $scope.showTabContainer = true;
         $scope.showLoader = false;
 
         $scope.sliderYear = null;
         $scope.sliderEndYear = null;
+
+        $scope.hucArray = appSettings.hucArray;
 
         /**
          * Alert
@@ -104,17 +105,18 @@
         /*
         * Select Options for Variables
         **/
+       /*
         $scope.populateAreaVariableOptions = function (option) {
             $scope.showAreaVariableSelector = true;
             $scope.areaSelectFrom = option.value;
             $scope.areaVariableOptions = CommonService.getAreaVariableOptions(option.value);
-        };
+        };*/
 
         // Default the administrative area selection
         var clearSelectedArea = function () {
             $scope.areaSelectFrom = '';
             $scope.areaIndexSelector = '';
-            $scope.areaName = '';
+            $scope.hucName = '';
             $scope.$apply();
         };
 
@@ -139,7 +141,7 @@
                 year: year,
                 shape: $scope.shape,
                 areaSelectFrom: $scope.areaSelectFrom,
-                areaName: $scope.areaName
+                hucName: $scope.hucName
             };
             $scope.showLoader = false;
         };
@@ -158,7 +160,7 @@
                 primitiveCheck = true;
 
             var hasPolygon = (['polygon', 'circle', 'rectangle'].indexOf($scope.shape.type) > -1);
-            if (!hasPolygon && !$scope.areaSelectFrom && !$scope.areaName) {
+            if (!hasPolygon && !$scope.hucName) {
                 $scope.showAlert('danger', 'Please draw a polygon or select administrative region before proceding to download!');
                 polygonCheck = false;
             }
@@ -202,12 +204,12 @@
         /*
         * load administrative area
         **/
-        $scope.loadAdminArea = function (name) {
+        $scope.loadHUC = function (name) {
             MapService.clearDrawing($scope.overlays.polygon);
             MapService.removeGeoJson(map);
             $scope.shape = {};
-            $scope.areaName = name;
-            MapService.loadGeoJson(map, $scope.areaSelectFrom, name);
+            $scope.hucName = name;
+            MapService.loadGeoJson(map, name);
         };
 
         /**
@@ -429,7 +431,7 @@
                     year: $scope.sliderYear,
                     shape: $scope.shape,
                     areaSelectFrom: $scope.areaSelectFrom,
-                    areaName: $scope.areaName,
+                    hucName: $scope.hucName,
                     type: type,
                     index: $scope.primitiveIndex
                 };
@@ -463,7 +465,7 @@
                     year: $scope.sliderYear,
                     shape: $scope.shape,
                     areaSelectFrom: $scope.areaSelectFrom,
-                    areaName: $scope.areaName,
+                    hucName: $scope.hucName,
                     v1: v1,
                     type: type,
                     index: $scope.primitiveIndex,

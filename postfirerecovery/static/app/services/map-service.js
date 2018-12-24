@@ -49,10 +49,10 @@
          * GeoJson
          **/
 
-        service.loadGeoJson = function (map, dir, name) {
+        service.loadGeoJson = function (map, name) {
             if (name) {
                 map.data.loadGeoJson(
-                    '/static/data/' + dir + '/' + name + '.json'
+                    '/static/data/watersheds/' + name + '.geo.json'
                 );
     
                 map.data.setStyle({
