@@ -114,6 +114,31 @@
         // get tooltip activated
         $('.js-tooltip').tooltip();
 
+        /**
+         * Slider
+         */
+        // Landcover opacity slider
+        $scope.landcoverOpacity = 1;
+        $scope.showLandcoverOpacitySlider = true;
+        /* slider init */
+        $timeout(function () {
+            var landcoverSlider = $('#landcover-opacity-slider').slider({
+                formatter: function (value) {
+                    return value;
+                },
+                tooltip: 'always'
+            })
+            .on('slideStart', function (event) {
+                $scope.landcoverOpacity = $(this).data('slider').getValue();
+            })
+            .on('slideStop', function (event) {
+                var value = $(this).data('slider').getValue();
+                if (value !== $scope.landcoverOpacity) {
+                    $scope.overlays.landcovermap.setOpacity(value);
+                }
+            });
+        }, 500);
+
         /*
         * Select Options for Variables
         **/
@@ -413,6 +438,22 @@
             formatter: function (value) {
                 return 'Opacity: ' + value;
             }
+        };
+
+        // Update Assemblage Map
+        $scope.updateAssemblageProduct = function () {
+            $scope.showLoader = true;
+            $scope.closeAlert();
+            $scope.assemblageLayers = [];
+            $('input[name="assemblage-checkbox"]').each(function () {
+                if ($(this).prop('checked')) {
+                    $scope.assemblageLayers.push($(this).val());
+                }
+            });
+            MapService.clearLayer(map, 'landcovermap');
+            $scope.initMap($scope.sliderYear, 'landcovermap');
+            $scope.getStats();
+            MapService.removeGeoJson(map);
         };
 
         // Time Slider

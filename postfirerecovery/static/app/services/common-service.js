@@ -51,7 +51,7 @@
                 },
                 series: [
                     {
-                        name: 'Area',
+                        name: 'Area (hectare)',
                         coloyByPoint: true,
                         data: data
                     }

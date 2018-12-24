@@ -35,7 +35,22 @@
     bottom: 5px;
 }
 
-#landcover-opacity-slider .slider-selection, #primitive-opacity-slider .slider-selection, #probability-opacity-slider .slider-selection {
+#landcover-opacity-slider .slider-selection {
+    background: rgb(198, 40, 40);
+}
+
+#landcover-opacity-slider .slider-handle {
+    background: rgb(198, 40, 40);
+    width: 15px;
+    height: 15px;
+}
+
+#landcover-opacity-slider .slider-track {
+    height: 5px;
+    border-radius: 0;
+}
+
+#landcover-opacity-slider .slider-track-high {
     background: #BABABA;
 }
 
