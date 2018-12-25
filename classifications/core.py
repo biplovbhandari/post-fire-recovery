@@ -19,6 +19,8 @@ class Classification():
     GEOMETRY = AOI.geometry()
 
     LANDCOVERMAP = ee.ImageCollection('users/TEST/CAFire/RandomForest/RF_classification')
+    COMPOSITE_FALL = ee.ImageCollection('users/TEST/CAFire/SeasonComposites/Fall_Full')
+    COMPOSITE_SUMMER = ee.ImageCollection('users/TEST/CAFire/SeasonComposites/Summer_Full')
 
     # Class and Index
     CLASSES = [
@@ -74,6 +76,7 @@ class Classification():
         self.geom = geom
         self.radius = radius
         self.center = center
+        self.band_names = Classification.COMPOSITE_FALL.first().bandNames().getInfo()
         if shape:
             self.geometry = self._get_geometry(shape)
         elif huc_name:
@@ -153,6 +156,54 @@ class Classification():
             'eeMapId': str(map_id['mapid']),
             'eeMapToken': str(map_id['token'])
         }
+
+    # -------------------------------------------------------------------------
+    def get_composite(self, year, gamma, season, visualize, red_band, green_band, blue_band, grayscale_band, download):
+
+        visualization_parameters = {
+            'gamma': '{}'.format(gamma),
+            'min'  : '40',
+            'max'  : '2500'
+        }
+
+        if not download:
+            download = False
+
+        if visualize == 'rgb':
+            if not red_band:
+                red_band = self.band_names[0]
+            if not green_band:
+                green_band = self.band_names[1]
+            if not blue_band:
+                blue_band = self.band_names[2]
+
+            visualization_parameters['bands'] = '{},{},{}'.format(red_band, green_band, blue_band)
+
+        elif visualize == 'grayscale':
+            if not grayscale_band:
+                grayscale_band = self.band_names[0]
+
+            visualization_parameters['bands'] = '{}'.format(grayscale_band)
+
+        if season == 'fall':
+            image = ee.Image(Classification.COMPOSITE_FALL.filterDate('%s-01-01' % year,
+                                                                      '%s-12-31' % year).mean())
+        elif season == 'summer':
+            image = ee.Image(Classification.COMPOSITE_SUMMER.filterDate('%s-01-01' % year,
+                                                                        '%s-12-31' % year).mean())
+
+        image = image.clip(self.geometry)
+
+        if download:
+            return image
+
+        map_id = image.getMapId(visualization_parameters)
+
+        return {
+            'eeMapId': str(map_id['mapid']),
+            'eeMapToken': str(map_id['token'])
+        }
+        
 
     # -------------------------------------------------------------------------
     def get_download_url(self, type='landcover', year=2018, primitives=range(0, 8), index=0):

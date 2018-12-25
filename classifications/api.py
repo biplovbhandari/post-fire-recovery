@@ -15,6 +15,7 @@ import time
 
 PUBLIC_METHODS = [
     'landcovermap',
+    'composite',
     'get-download-url',
     'download-to-drive',
     'get-stats',
@@ -58,6 +59,17 @@ def api(request):
 
         if action == 'landcovermap':
             data = core.get_landcover(primitives=primitives, year=year)
+
+        elif action == 'composite':
+            gamma = post('gamma', 1)
+            season = post('season', 'fall')
+            visualize = post('visualize', 'rgb')
+            red_band = post('redBand')
+            green_band = post('greenBand')
+            blue_band = post('blueBand')
+            grayscale_band = post('grayscaleBand')
+
+            data = core.get_composite(year, gamma, season, visualize, red_band, green_band, blue_band, grayscale_band, False)
 
         elif action == 'get-download-url':
             data = core.get_download_url(type = type,

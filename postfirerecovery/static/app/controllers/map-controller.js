@@ -58,27 +58,42 @@
             $('.custom-alert').removeClass('display-none').removeClass('alert-' + alertClass[0]).removeClass('alert-' + alertClass[1]).addClass('alert-' + className);
         };
 
+        /* Updates the image based on the current control panel config. */
+        var loadMap = function (type, mapType) {
+            // Remove first if the same layer is an update
+            map.overlayMapTypes.forEach(function (mapType, index) {
+                if (mapType.name === type) {
+                    map.overlayMapTypes.removeAt(index);
+                }
+            });
+            map.overlayMapTypes.push(mapType);
+            $scope.overlays[type] = mapType;
+            $scope.showLoader = false;
+        };
+
         /**
          * Start with UI
          */
 
         // Band selector
-        $scope.bandVisualize = $scope.bandSelector[1];
         $scope.showGrayscaleBandSelector = false;
         $scope.showRGBBandSelector = true;
 
-        $scope.season = $scope.seasons[0];
-        $scope.redBand = $scope.bands[0];
-        $scope.greenBand = $scope.bands[1];
-        $scope.blueBand = $scope.bands[2];
-        $scope.grayscaleBand = $scope.bands[0];
-        $scope.gamma = 1.00;
+        $scope.compositeParams = {};
+        $scope.compositeParams.bandVisualize = $scope.bandSelector[1];
+
+        $scope.compositeParams.season = $scope.seasons[0];
+        $scope.compositeParams.redBand = $scope.bands[0];
+        $scope.compositeParams.greenBand = $scope.bands[1];
+        $scope.compositeParams.blueBand = $scope.bands[2];
+        $scope.compositeParams.grayscaleBand = $scope.bands[0];
+        $scope.compositeParams.gamma = 1.00;
 
         $scope.showBandSelector = function (option) {
-            if (option === '1 band (Grayscale)') {
+            if (option.value === 'grayscale') {
                 $scope.showRGBBandSelector = false;
                 $scope.showGrayscaleBandSelector = true;
-            } else if (option === '3 bands (RGB)') {
+            } else if (option.value === 'rgb') {
                 $scope.showGrayscaleBandSelector = false;
                 $scope.showRGBBandSelector = true;
             } else {
@@ -87,13 +102,40 @@
         };
 
         $scope.updateComposite = function () {
-            console.log($scope.season);
-            console.log($scope.bandVisualize);
-            console.log($scope.redBand);
-            console.log($scope.greenBand);
-            console.log($scope.blueBand);
-            console.log($scope.grayscaleBand);
-            console.log($scope.gamma);
+
+            $scope.showLoader = true;
+
+            var parameters = {
+                year: $scope.sliderYear,
+                shape: $scope.shape,
+                hucName: $scope.hucName,
+                season: $scope.compositeParams.season.toLowerCase(),
+                gamma: $scope.compositeParams.gamma
+            };
+
+            if ($scope.showRGBBandSelector) {
+                parameters.visualize = 'rgb';
+                parameters.redBand = $scope.compositeParams.redBand;
+                parameters.greenBand = $scope.compositeParams.greenBand;
+                parameters.blueBand = $scope.compositeParams.blueBand;
+            } else {
+                parameters.visualize = 'grayscale';
+                parameters.grayscaleBand = $scope.compositeParams.grayscaleBand;
+            }
+
+            LandCoverService.getCompositeMap(parameters)
+            .then(function (data) {
+                var type = 'composite';
+                var mapType = MapService.getMapType(data.eeMapId, data.eeMapToken, type);
+                loadMap(type, mapType);
+                $timeout(function () {
+                    $scope.showAlert('info', 'Showing composite for ' + $scope.sliderYear);
+                }, 2000);
+            }, function (error) {
+                $scope.showLoader = true;
+                $scope.showAlert('error', error.error);
+                console.log(error);
+            });
         };
 
         // Analysis Tool Control
@@ -176,13 +218,6 @@
             $scope.areaIndexSelector = '';
             $scope.hucName = '';
             $scope.$apply();
-        };
-
-        /* Updates the image based on the current control panel config. */
-        var loadMap = function (type, mapType) {
-            map.overlayMapTypes.push(mapType);
-            $scope.overlays[type] = mapType;
-            $scope.showLoader = false;
         };
 
         /**

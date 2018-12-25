@@ -111,8 +111,9 @@
 
                 <!-- Start of Composite Tab -->
                 <div class="tab-pane fade in" id="composite-tab">
+                    <!--
                     <fieldset class="row lcp-class-container">
-                        <!-- Download button -->
+                        
                         <div class="btn-group btn-block">
                             <button type="button" class="btn col-md-11 btn-sm btn-primary">Download Composite Data</button>
                             <button type="button" class="btn col-md-1 btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -124,7 +125,6 @@
                                 <li><a href="#" ng-click="showGDriveFileName('primitive')" style="color: black;">To your Google Drive!</a></li>
                             </ul>
                         </div>
-                        <!-- Start -->
                         <div class="input-group" ng-show="showPrimitiveDownloadURL" style="top: 15px;">
                             <input type="text" class="form-control" value="[[primitiveDownloadURL]]">
                             <span class="input-group-btn">
@@ -133,7 +133,6 @@
                                         title="Copy to clipboard"
                                         ng-click="copyToClipBoard('primitive')"
                                         style="height: 34px;margin-bottom: 14px;">
-                                    <!-- icon from google's material design library -->
                                     <svg class="clipboard-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" /></svg>
                                 </button>
                             </span>
@@ -149,9 +148,8 @@
                                 </button>
                             </span>
                         </div>
-                        <!-- End -->
                     </fieldset>
-
+                    -->
                     <fieldset class="row lcp-class-container" ng-show="showPrimitiveOpacitySlider">
                         <div class="form-group col-md-12">
                             <label for="primitive-opacity-slider">Change Opacity</label>
@@ -165,8 +163,8 @@
                                 Select Seasons
                             </label>
                             <select name="seasons" class="form-control"
-                                    ng-options="season for season in seasons"
-                                    ng-model="season"></select>
+                                    ng-options="item for item in seasons"
+                                    ng-model="compositeParams.season"></select>
                         </div>
 
                         <div class="form-group">
@@ -174,15 +172,15 @@
                                 Number of Bands to visualize
                             </label>
                             <select name="band-number-filter" class="form-control"
-                                    ng-options="option for option in bandSelector"
-                                    ng-model="bandVisualize"
-                                    ng-change="showBandSelector(bandVisualize)"></select>
+                                    ng-options="option.name for option in bandSelector"
+                                    ng-model="compositeParams.bandVisualize"
+                                    ng-change="showBandSelector(compositeParams.bandVisualize)"></select>
                         </div>
 
                         <div ng-show="showGrayscaleBandSelector">
                             <div class="form-group">
                                 <label class="control-label" for="grayscale-band">Select Band (Grayscale)</label>
-                                <select name="grayscale-band" class="form-control" ng-options="band for band in bands" ng-model="grayscaleBand"></select>
+                                <select name="grayscale-band" class="form-control" ng-model="compositeParams.grayscaleBand" ng-options="band for band in bands"></select>
                             </div>
                         </div>
 
@@ -190,20 +188,20 @@
                             <label class="control-label">Select Bands (R,G,B)</label>
                             <div class="form-group">
                                 <div class="col-md-4">
-                                    <select name="red-band" class="form-control" ng-options="band for band in bands" ng-model="redBand"></select>
+                                    <select class="form-control" ng-model="compositeParams.redBand" ng-options="band for band in bands"></select>
                                 </div>
                                 <div class="col-md-4">
-                                    <select name="green-band" class="form-control" ng-options="band for band in bands" ng-model="greenBand"></select>
+                                    <select class="form-control" ng-model="compositeParams.greenBand" ng-options="band for band in bands"></select>
                                 </div>
                                 <div class="col-md-4">
-                                    <select name="blue-band" class="form-control" ng-options="band for band in bands" ng-model="blueBand"></select>
+                                    <select class="form-control" ng-model="compositeParams.blueBand" ng-options="band for band in bands"></select>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group" style="margin-top: 3em;">
                             <label for="gamma">Gamma</label>
-                            <input type="number" class="form-control" id="gamma" min="0.10" max="10.00" step="0.01" ng-model="gamma">
+                            <input type="number" class="form-control" id="gamma" min="0.10" max="10.00" step="0.01" ng-model="compositeParams.gamma">
                         </div>
                     </fieldset>
 
