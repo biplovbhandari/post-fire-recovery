@@ -2,7 +2,7 @@
 
     'use strict';
     angular.module('postfirerecovery')
-    .controller('mapController', function (appSettings, $scope, $sanitize, $timeout, CommonService, LandCoverService, MapService) {
+    .controller('mapController', function (appSettings, $rootScope, $scope, $sanitize, $timeout, CommonService, LandCoverService, MapService) {
 
         // Global Variables
         var map = MapService.init();
@@ -14,6 +14,9 @@
         $scope.shownGeoJson = null;
         $scope.hucUnits = appSettings.hucUnits;
         $scope.typologyCSV = '/static/data/typology_value.csv';
+        $scope.seasons = appSettings.seasons;
+        $scope.bands = appSettings.bands;
+        $scope.bandSelector = appSettings.bandSelector;
 
         //$scope.showAreaVariableSelector = false;
         $scope.alertContent = '';
@@ -59,18 +62,39 @@
          * Start with UI
          */
 
-        // Datepicker
-		var datepickerYearOptions = {
-			autoclose: true,
-			startDate: new Date('1984'),
-			endDate: new Date('2018'),
-			clearBtn: true,
-            container: '.datepicker-year-class',
-            format: 'yyyy/mm/dd',
+        // Band selector
+        $scope.bandVisualize = $scope.bandSelector[1];
+        $scope.showGrayscaleBandSelector = false;
+        $scope.showRGBBandSelector = true;
+
+        $scope.season = $scope.seasons[0];
+        $scope.redBand = $scope.bands[0];
+        $scope.greenBand = $scope.bands[1];
+        $scope.blueBand = $scope.bands[2];
+        $scope.grayscaleBand = $scope.bands[0];
+        $scope.gamma = 1.00;
+
+        $scope.showBandSelector = function (option) {
+            if (option === '1 band (Grayscale)') {
+                $scope.showRGBBandSelector = false;
+                $scope.showGrayscaleBandSelector = true;
+            } else if (option === '3 bands (RGB)') {
+                $scope.showGrayscaleBandSelector = false;
+                $scope.showRGBBandSelector = true;
+            } else {
+                console.log('invalid selection');
+            }
         };
 
-		$('#datepicker-year-start').datepicker(datepickerYearOptions);
-		$('#datepicker-year-end').datepicker(datepickerYearOptions);
+        $scope.updateComposite = function () {
+            console.log($scope.season);
+            console.log($scope.bandVisualize);
+            console.log($scope.redBand);
+            console.log($scope.greenBand);
+            console.log($scope.blueBand);
+            console.log($scope.grayscaleBand);
+            console.log($scope.gamma);
+        };
 
         // Analysis Tool Control
         $scope.toggleToolControl = function () {
@@ -106,10 +130,12 @@
             $(this).removeClass('btn-default').addClass('btn-primary');
         });
 
-        $('#sidebar-tab .btn-pref .btn').click(function () {
-            $('#sidebar-tab .btn-pref .btn').removeClass('btn-primary').addClass('btn-default');
-            // $(".tab").addClass("active"); // instead of this do the below
-            $(this).removeClass('btn-default').addClass('btn-primary');
+        $rootScope.$on('$includeContentLoaded', function() {
+            $('#sidebar-tab .btn-pref .btn').click(function () {
+                $('#sidebar-tab .btn-pref .btn').removeClass('btn-primary').addClass('btn-default');
+                // $(".tab").addClass("active"); // instead of this do the below
+                $(this).removeClass('btn-default').addClass('btn-primary');
+            }); 
         });
 
         // get tooltip activated

@@ -26,6 +26,9 @@ var settings = {
             'className': 'sig'
         }
     ],
+    seasons: ['Fall', 'Summer'],
+    bands: ['blue', 'green', 'red', 'nir', 'swir1', 'swir2'],
+    bandSelector: ['1 band (Grayscale)', '3 bands (RGB)'],
     // this list is generated from python script at /scripts/list-huc.py
     hucUnits: ['City of Reno-Truckee River', 'Downie River', 'Lemmon Valley', 'Little Truckee River', 'Lower North Yuba River', 'Middle Middle Fork Feather River', 'Middle North Yuba River', 'Middle Yuba River', 'Sierra Valley', 'Smithneck Creek', 'South Fork Feather River', 'Upper Long Valley Creek', 'Upper Middle Fork Feather River', 'Upper North Yuba River'],
     landCoverClasses: [
