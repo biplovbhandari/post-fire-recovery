@@ -97,12 +97,13 @@
 
             // Params for visualization
             var season = options.season;
-            var gamma = options.gamma;
+            //var gamma = options.gamma;
             var visualize = options.visualize;
             var redBand = options.redBand;
             var greenBand = options.greenBand;
             var blueBand = options.blueBand;
             var grayscaleBand = options.grayscaleBand;
+            var palette = options.palette;
 
             var year = options.year;
             var shape = options.shape;
@@ -114,12 +115,13 @@
                 data: {
                     year: year,
                     season: season,
-                    gamma: gamma,
+                    //gamma: gamma,
                     visualize: visualize,
                     redBand: redBand,
                     greenBand: greenBand,
                     blueBand: blueBand,
-                    grayscaleBand: grayscaleBand
+                    grayscaleBand: grayscaleBand,
+                    palette: palette
                 },
                 params: {
                     action: 'composite'
@@ -162,12 +164,13 @@
             var primitives = options.primitives;
             // Composite params
             var season = options.season;
-            var gamma = options.gamma;
+            //var gamma = options.gamma;
             var visualize = options.visualize;
             var redBand = options.redBand;
             var greenBand = options.greenBand;
             var blueBand = options.blueBand;
             var grayscaleBand = options.grayscaleBand;
+            var palette = options.palette;
 
             var req = {
                 method: 'POST',
@@ -177,12 +180,13 @@
                     type: type,
                     primitives: primitives.toString(),
                     season: season,
-                    gamma: gamma,
+                    //gamma: gamma,
                     visualize: visualize,
                     redBand: redBand,
                     greenBand: greenBand,
                     blueBand: blueBand,
-                    grayscaleBand: grayscaleBand
+                    grayscaleBand: grayscaleBand,
+                    palette: palette
                 },
                 params: {
                     action: 'get-download-url'

@@ -160,7 +160,7 @@ class Classification():
     # -------------------------------------------------------------------------
     def get_composite(self,
                       year = 2018,
-                      gamma = 1,
+                      #gamma = 1,
                       season = 'fall',
                       visualize = 'rgb',
                       red_band = None,
@@ -168,10 +168,11 @@ class Classification():
                       blue_band = None,
                       grayscale_band = None,
                       download = False,
+                      palette = None,
                       ):
 
         visualization_parameters = {
-            'gamma': '{}'.format(gamma),
+            #'gamma': '{}'.format(gamma),
             'min'  : '40',
             'max'  : '2500'
         }
@@ -190,8 +191,10 @@ class Classification():
         elif visualize == 'grayscale':
             if not grayscale_band:
                 grayscale_band = self.band_names[0]
-
             visualization_parameters['bands'] = ['{}'.format(grayscale_band)]
+
+            if palette:
+                visualization_parameters['palette'] = palette
 
         if season == 'fall':
             image = ee.Image(Classification.COMPOSITE_FALL.filterDate('%s-01-01' % year,
@@ -209,7 +212,8 @@ class Classification():
             return image.visualize(bands = visualization_parameters['bands'],
                                    min = visualization_parameters['min'],
                                    max = visualization_parameters['max'],
-                                   gamma = visualization_parameters['gamma'])
+                                   #gamma = visualization_parameters['gamma'],
+                                   palette = visualization_parameters['palette'] if palette else None)
 
         map_id = image.getMapId(visualization_parameters)
 
@@ -224,27 +228,29 @@ class Classification():
                          type = 'landcover',
                          year = 2018,
                          primitives = range(0, 8),
-                         gamma = 1,
+                         #gamma = 1,
                          season = 'fall',
                          visualize = 'rgb',
                          red_band = None,
                          green_band = None,
                          blue_band = None,
                          grayscale_band = None,
+                         palette = None,
                          ):
 
         if type == 'landcover':
             image = self.get_landcover(primitives=primitives, year=year, download=True)
         elif type == 'composite':
             image = self.get_composite(year = year,
-                                       gamma = gamma,
+                                       #gamma = gamma,
                                        season = season,
                                        visualize = visualize,
                                        red_band = red_band,
                                        green_band = green_band,
                                        blue_band = blue_band,
                                        grayscale_band = grayscale_band,
-                                       download = True)
+                                       download = True,
+                                       palette = palette)
 
         try:
             url = image.getDownloadURL({

@@ -81,7 +81,8 @@
         $scope.compositeParams.greenBand = $scope.bands[1];
         $scope.compositeParams.blueBand = $scope.bands[2];
         $scope.compositeParams.grayscaleBand = $scope.bands[0];
-        $scope.compositeParams.gamma = 1.00;
+        //$scope.compositeParams.gamma = 1.00;
+        $scope.compositeParams.palette = '';
 
         $scope.showBandSelector = function (option) {
             if (option.value === 'grayscale') {
@@ -105,7 +106,7 @@
                 shape: $scope.shape,
                 hucName: $scope.hucName,
                 season: $scope.compositeParams.season.toLowerCase(),
-                gamma: $scope.compositeParams.gamma
+                //gamma: $scope.compositeParams.gamma
             };
 
             if ($scope.showRGBBandSelector) {
@@ -116,6 +117,7 @@
             } else {
                 parameters.visualize = 'grayscale';
                 parameters.grayscaleBand = $scope.compositeParams.grayscaleBand;
+                parameters.palette = $scope.compositeParams.palette;
             }
 
             // Clear before adding
@@ -583,7 +585,7 @@
                     primitives: $scope.assemblageLayers,
                     // Composite params
                     season: $scope.compositeParams.season.toLowerCase(),
-                    gamma: $scope.compositeParams.gamma
+                    //gamma: $scope.compositeParams.gamma
                 };
 
                 if ($scope.showRGBBandSelector) {

@@ -54,13 +54,14 @@ def api(request):
         # using older version of bleach to keep intact with the django cms
         file_name = bleach.clean(post('fileName', ''))
 
-        gamma = post('gamma', 1)
+        #gamma = post('gamma', 1)
         season = post('season', 'fall')
         visualize = post('visualize', 'rgb')
         red_band = post('redBand')
         green_band = post('greenBand')
         blue_band = post('blueBand')
         grayscale_band = post('grayscaleBand')
+        palette = post('palette')
 
         core = Classification(huc_name, shape, geom, radius, center)
 
@@ -69,25 +70,27 @@ def api(request):
 
         elif action == 'composite':
             data = core.get_composite(year = year,
-                                      gamma = gamma,
+                                      #gamma = gamma,
                                       season = season,
                                       visualize = visualize,
                                       red_band = red_band,
                                       green_band = green_band,
                                       blue_band = blue_band,
-                                      grayscale_band = grayscale_band)
+                                      grayscale_band = grayscale_band,
+                                      palette = palette)
 
         elif action == 'get-download-url':
             data = core.get_download_url(type = type,
                                          year = year,
                                          primitives = primitives,
-                                         gamma = gamma,
+                                         #gamma = gamma,
                                          season = season,
                                          visualize = visualize,
                                          red_band = red_band,
                                          green_band = green_band,
                                          blue_band = blue_band,
                                          grayscale_band = grayscale_band,
+                                         palette = palette,
                                          )
 
         elif action == 'get-stats':
