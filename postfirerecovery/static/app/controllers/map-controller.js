@@ -60,12 +60,6 @@
 
         /* Updates the image based on the current control panel config. */
         var loadMap = function (type, mapType) {
-            // Remove first if the same layer is an update
-            map.overlayMapTypes.forEach(function (mapType, index) {
-                if (mapType.name === type) {
-                    map.overlayMapTypes.removeAt(index);
-                }
-            });
             map.overlayMapTypes.push(mapType);
             $scope.overlays[type] = mapType;
             $scope.showLoader = false;
@@ -101,6 +95,7 @@
             }
         };
 
+        $scope.mapHasCompositeLayer = false;
         $scope.updateComposite = function () {
 
             $scope.showLoader = true;
@@ -123,17 +118,24 @@
                 parameters.grayscaleBand = $scope.compositeParams.grayscaleBand;
             }
 
+            // Clear before adding
+            MapService.clearLayer(map, 'composite');
+            $scope.mapHasCompositeLayer = false;
+            $scope.compositeDownloadURL = '';
+            $scope.showCompositeDownloadURL = false;
+
             LandCoverService.getCompositeMap(parameters)
             .then(function (data) {
                 var type = 'composite';
                 var mapType = MapService.getMapType(data.eeMapId, data.eeMapToken, type);
                 loadMap(type, mapType);
+                $scope.mapHasCompositeLayer = true;
                 $timeout(function () {
                     $scope.showAlert('info', 'Showing composite for ' + $scope.sliderYear);
                 }, 2000);
             }, function (error) {
                 $scope.showLoader = true;
-                $scope.showAlert('error', error.error);
+                $scope.showAlert('danger', error.error);
                 console.log(error);
             });
         };
@@ -208,6 +210,27 @@
             });
         }, 500);
 
+        // Composite opacity slider
+        $scope.compositeOpacity = 1;
+        /* slider init */
+        $timeout(function () {
+            var compositeSlider = $('#composite-opacity-slider').slider({
+                formatter: function (value) {
+                    return value;
+                },
+                tooltip: 'always'
+            })
+            .on('slideStart', function (event) {
+                $scope.compositeOpacity = $(this).data('slider').getValue();
+            })
+            .on('slideStop', function (event) {
+                var value = $(this).data('slider').getValue();
+                if (value !== $scope.compositeOpacity) {
+                    $scope.overlays.composite.setOpacity(value);
+                }
+            });
+        }, 500);
+
         /*
         * Select Options for Variables
         **/
@@ -240,7 +263,7 @@
                     $scope.showAlert('info', 'The map data shows the landcover data for ' + $scope.sliderYear);
                 }, 3500);
             }, function (error) {
-                $scope.showAlert('error', error.error);
+                $scope.showAlert('danger', error.error);
                 console.log(error);
             });
         };
@@ -272,7 +295,7 @@
         var verifyBeforeDownload = function (type) {
             if (typeof(type) === 'undefined') type = 'landcover';
             var polygonCheck = true,
-                primitiveCheck = true;
+                compositeCheck = true;
 
             var hasPolygon = (['polygon', 'circle', 'rectangle'].indexOf($scope.shape.type) > -1);
             if (!hasPolygon && !$scope.hucName) {
@@ -280,13 +303,13 @@
                 polygonCheck = false;
             }
 
-            if (type === 'primitive') {
-                if (!$scope.primitiveIndex) {
-                    $scope.showAlert('danger', 'Select a primitive Layer to Download!');
-                    primitiveCheck = false;
+            if (type === 'composite') {
+                if (!$scope.mapHasCompositeLayer) {
+                    $scope.showAlert('danger', 'No composite layer displayed!');
+                    compositeCheck = false;
                 }
             }
-            return polygonCheck && primitiveCheck;
+            return polygonCheck && compositeCheck;
         };
 
         $scope.copyToClipBoard = function (type) {
@@ -493,15 +516,6 @@
             $scope.showLoader = false;
         });
 
-        /*
-        * Opacity Sliders
-        */
-        var sliderOptions = {
-            formatter: function (value) {
-                return 'Opacity: ' + value;
-            }
-        };
-
         // Update Assemblage Map
         $scope.updateAssemblageProduct = function () {
             $scope.showLoader = true;
@@ -542,11 +556,16 @@
             });
         }, 200);
 
-        // Download URL
+        /*
+         * Download URL
+         */
+
+        // Landcover
         $scope.landcoverDownloadURL = '';
         $scope.showLandcoverDownloadURL = false;
-        $scope.showPrimitiveDownloadURL = false;
-        $scope.primitiveDownloadURL = '';
+        // Composite
+        $scope.showCompositeDownloadURL = false;
+        $scope.compositeDownloadURL = '';
 
         $scope.getDownloadURL = function (type) {
             if (typeof(type) === 'undefined') type = 'landcover';
@@ -555,20 +574,35 @@
                 $scope.showAlert('info', 'Preparing Download Link...');
 
                 var parameters = {
-                    primitives: $scope.assemblageLayers,
+                    // Common params
                     year: $scope.sliderYear,
                     shape: $scope.shape,
                     hucName: $scope.hucName,
                     type: type,
-                    index: $scope.primitiveIndex
+                    // Land cover params
+                    primitives: $scope.assemblageLayers,
+                    // Composite params
+                    season: $scope.compositeParams.season.toLowerCase(),
+                    gamma: $scope.compositeParams.gamma
                 };
+
+                if ($scope.showRGBBandSelector) {
+                    parameters.visualize = 'rgb';
+                    parameters.redBand = $scope.compositeParams.redBand;
+                    parameters.greenBand = $scope.compositeParams.greenBand;
+                    parameters.blueBand = $scope.compositeParams.blueBand;
+                } else {
+                    parameters.visualize = 'grayscale';
+                    parameters.grayscaleBand = $scope.compositeParams.grayscaleBand;
+                }
+
                 LandCoverService.getDownloadURL(parameters)
                 .then(function (data) {
                     $scope.showAlert('success', 'Your Download Link is ready!');
                     $scope[type + 'DownloadURL'] = data.downloadUrl;
                     $scope['show' + CommonService.capitalizeString(type) + 'DownloadURL'] = true;
                 }, function (error) {
-                    $scope.showAlert('error', error.error);
+                    $scope.showAlert('danger', error.error);
                     console.log(error);
                 });
             }

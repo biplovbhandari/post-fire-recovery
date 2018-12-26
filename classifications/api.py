@@ -39,7 +39,6 @@ def api(request):
         type = post('type', 'landcover')
         report_area = True if get('report-area') == 'true' else False
         primitives = post('primitives', range(0, len(Classification.CLASSES)))
-        index = int(post('index', 0))
         if isinstance(primitives, (unicode, str)):
             try:
                 primitives = primitives.split(',')
@@ -55,27 +54,40 @@ def api(request):
         # using older version of bleach to keep intact with the django cms
         file_name = bleach.clean(post('fileName', ''))
 
+        gamma = post('gamma', 1)
+        season = post('season', 'fall')
+        visualize = post('visualize', 'rgb')
+        red_band = post('redBand')
+        green_band = post('greenBand')
+        blue_band = post('blueBand')
+        grayscale_band = post('grayscaleBand')
+
         core = Classification(huc_name, shape, geom, radius, center)
 
         if action == 'landcovermap':
             data = core.get_landcover(primitives=primitives, year=year)
 
         elif action == 'composite':
-            gamma = post('gamma', 1)
-            season = post('season', 'fall')
-            visualize = post('visualize', 'rgb')
-            red_band = post('redBand')
-            green_band = post('greenBand')
-            blue_band = post('blueBand')
-            grayscale_band = post('grayscaleBand')
-
-            data = core.get_composite(year, gamma, season, visualize, red_band, green_band, blue_band, grayscale_band, False)
+            data = core.get_composite(year = year,
+                                      gamma = gamma,
+                                      season = season,
+                                      visualize = visualize,
+                                      red_band = red_band,
+                                      green_band = green_band,
+                                      blue_band = blue_band,
+                                      grayscale_band = grayscale_band)
 
         elif action == 'get-download-url':
             data = core.get_download_url(type = type,
                                          year = year,
                                          primitives = primitives,
-                                         index = index
+                                         gamma = gamma,
+                                         season = season,
+                                         visualize = visualize,
+                                         red_band = red_band,
+                                         green_band = green_band,
+                                         blue_band = blue_band,
+                                         grayscale_band = grayscale_band,
                                          )
 
         elif action == 'get-stats':

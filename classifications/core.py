@@ -158,16 +158,23 @@ class Classification():
         }
 
     # -------------------------------------------------------------------------
-    def get_composite(self, year, gamma, season, visualize, red_band, green_band, blue_band, grayscale_band, download):
+    def get_composite(self,
+                      year = 2018,
+                      gamma = 1,
+                      season = 'fall',
+                      visualize = 'rgb',
+                      red_band = None,
+                      green_band = None,
+                      blue_band = None,
+                      grayscale_band = None,
+                      download = False,
+                      ):
 
         visualization_parameters = {
             'gamma': '{}'.format(gamma),
             'min'  : '40',
             'max'  : '2500'
         }
-
-        if not download:
-            download = False
 
         if visualize == 'rgb':
             if not red_band:
@@ -177,13 +184,14 @@ class Classification():
             if not blue_band:
                 blue_band = self.band_names[2]
 
-            visualization_parameters['bands'] = '{},{},{}'.format(red_band, green_band, blue_band)
+            #visualization_parameters['bands'] = '{},{},{}'.format(red_band, green_band, blue_band)
+            visualization_parameters['bands'] = ['{}'.format(red_band),'{}'.format(green_band),'{}'.format(blue_band)]
 
         elif visualize == 'grayscale':
             if not grayscale_band:
                 grayscale_band = self.band_names[0]
 
-            visualization_parameters['bands'] = '{}'.format(grayscale_band)
+            visualization_parameters['bands'] = ['{}'.format(grayscale_band)]
 
         if season == 'fall':
             image = ee.Image(Classification.COMPOSITE_FALL.filterDate('%s-01-01' % year,
@@ -195,7 +203,13 @@ class Classification():
         image = image.clip(self.geometry)
 
         if download:
-            return image
+            #return image.select(red_band).addBands(image.select(green_band)).addBands(image.select(blue_band))
+            #return ee.Image.rgb(image.select(red_band), image.select(green_band), image.select(blue_band))
+            #return image.select(['{}'.format(red_band),'{}'.format(green_band),'{}'.format(blue_band)])
+            return image.visualize(bands = visualization_parameters['bands'],
+                                   min = visualization_parameters['min'],
+                                   max = visualization_parameters['max'],
+                                   gamma = visualization_parameters['gamma'])
 
         map_id = image.getMapId(visualization_parameters)
 
@@ -206,10 +220,31 @@ class Classification():
         
 
     # -------------------------------------------------------------------------
-    def get_download_url(self, type='landcover', year=2018, primitives=range(0, 8), index=0):
+    def get_download_url(self,
+                         type = 'landcover',
+                         year = 2018,
+                         primitives = range(0, 8),
+                         gamma = 1,
+                         season = 'fall',
+                         visualize = 'rgb',
+                         red_band = None,
+                         green_band = None,
+                         blue_band = None,
+                         grayscale_band = None,
+                         ):
 
         if type == 'landcover':
-            image = self.get_landcover(primitives = primitives, year=year, download=True)
+            image = self.get_landcover(primitives=primitives, year=year, download=True)
+        elif type == 'composite':
+            image = self.get_composite(year = year,
+                                       gamma = gamma,
+                                       season = season,
+                                       visualize = visualize,
+                                       red_band = red_band,
+                                       green_band = green_band,
+                                       blue_band = blue_band,
+                                       grayscale_band = grayscale_band,
+                                       download = True)
 
         try:
             url = image.getDownloadURL({

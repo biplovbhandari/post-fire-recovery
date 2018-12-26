@@ -102,7 +102,7 @@
             var redBand = options.redBand;
             var greenBand = options.greenBand;
             var blueBand = options.blueBand;
-            var grayscaleBand = options.grayScaleBand;
+            var grayscaleBand = options.grayscaleBand;
 
             var year = options.year;
             var shape = options.shape;
@@ -151,61 +151,23 @@
             return promise;
         };
 
-        this.getPrimitiveMap = function (index, year, shape, areaSelectFrom, areaName, type) {
-
-            var url = '/api/landcover/';
-            if (type === 'myanmar-fra') {
-                url = '/api/myanmar-fra/';
-            } else if (type === 'myanmar-fra') {
-                url = '/api/myanmar-ipcc';
-            }
-
-            var req = {
-                method: 'POST',
-                url: url,
-                data: {
-                    year: year,
-                    index: index
-                },
-                params: {
-                    action: 'primitive'
-                }
-            };
-
-            if (areaSelectFrom && areaName) {
-                req.data.areaSelectFrom = areaSelectFrom;
-                req.data.areaName = areaName;
-            } else {
-                var shapeType = shape.type;
-                if (shapeType === 'rectangle' || shapeType === 'polygon') {
-                    req.data.shape = shapeType;
-                    req.data.geom = shape.geom.toString();
-                } else if (shapeType === 'circle') {
-                    req.data.shape = shapeType;
-                    req.data.radius = shape.radius;
-                    req.data.center = shape.center.toString();
-                }
-            }
-
-            var promise = $http(req)
-                .then(function (response) {
-                    return response.data;
-                })
-                .catch(function (e) {
-                    console.log('Error: ', e);
-                    throw e.data;
-                });
-            return promise;
-        };
-
         this.getDownloadURL = function (options) {
 
-            var primitives = options.primitives;
+            // Common params
             var year = options.year;
             var shape = options.shape;
             var hucName = options.hucName;
             var type = options.type;
-            var index = options.index;
+            // Land cover params
+            var primitives = options.primitives;
+            // Composite params
+            var season = options.season;
+            var gamma = options.gamma;
+            var visualize = options.visualize;
+            var redBand = options.redBand;
+            var greenBand = options.greenBand;
+            var blueBand = options.blueBand;
+            var grayscaleBand = options.grayscaleBand;
 
             var req = {
                 method: 'POST',
@@ -214,7 +176,13 @@
                     year: year,
                     type: type,
                     primitives: primitives.toString(),
-                    index: index
+                    season: season,
+                    gamma: gamma,
+                    visualize: visualize,
+                    redBand: redBand,
+                    greenBand: greenBand,
+                    blueBand: blueBand,
+                    grayscaleBand: grayscaleBand
                 },
                 params: {
                     action: 'get-download-url'
